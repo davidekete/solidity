@@ -114,6 +114,8 @@ add_library(yul
 	backends/evm/ssa/StackShuffler.h
 	backends/evm/ssa/StackUtils.cpp
 	backends/evm/ssa/StackUtils.h
+	backends/evm/ssa/AStarShuffler.cpp
+	backends/evm/ssa/AStarShuffler.h
 	optimiser/ASTCopier.cpp
 	optimiser/ASTCopier.h
 	optimiser/ASTWalker.cpp
