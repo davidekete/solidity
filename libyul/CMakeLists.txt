@@ -90,8 +90,10 @@ add_library(yul
 	backends/evm/ssa/SSACFG.h
 	backends/evm/ssa/SSACFGBuilder.cpp
 	backends/evm/ssa/SSACFGBuilder.h
+    backends/evm/ssa/SSACFGJsonExporter.h
 	backends/evm/ssa/SSACFGJsonExporter.cpp
-	backends/evm/ssa/SSACFGJsonExporter.h
+	backends/evm/ssa/TerminationPathAnalysis.cpp
+	backends/evm/ssa/TerminationPathAnalysis.h
 	backends/evm/ssa/Stack.cpp
 	backends/evm/ssa/Stack.h
 	backends/evm/ssa/StackLayout.h
