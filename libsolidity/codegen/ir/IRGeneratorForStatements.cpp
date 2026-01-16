@@ -1425,6 +1425,34 @@ void IRGeneratorForStatements::endVisit(FunctionCall const& _functionCall)
 		}
 		break;
 	}
+	case FunctionType::Kind::ERC7201:
+	{
+		solAssert(arguments.size() == 1);
+		Type const* argType = arguments.front()->annotation().type;
+		solAssert(argType);
+		if (dynamic_cast<StringLiteralType const*>(argType))
+		{
+			std::optional<u256> value = erc7201CompileTimeValue(_functionCall);
+			solAssert(*value);
+			define(_functionCall) << formatNumber(u256(*value)) << "\n";
+		}
+		else
+		{
+			Whiskers templ(R"(
+				<erc7201Builtin>(<namespaceID>)
+			)");
+
+			IRVariable stringArg = convert(*arguments[0], *TypeProvider::stringMemory());
+			solAssert(stringArg.stackSlots().size() == 1);
+			std::string namespaceID = stringArg.stackSlots().front();
+
+			templ("namespaceID", namespaceID);
+			templ("erc7201Builtin", m_utils.erc7201());
+
+			define(_functionCall) << templ.render();
+		}
+		break;
+	}
 	case FunctionType::Kind::ArrayPop:
 	{
 		solAssert(functionType->hasBoundFirstArgument());
@@ -1725,19 +1753,6 @@ void IRGeneratorForStatements::endVisit(FunctionCall const& _functionCall)
 
 		appendCode() << templ.render();
 
-		break;
-	}
-	case FunctionType::Kind::ERC7201:
-	{
-		solAssert(arguments.size() == 1);
-		auto typedRational = ConstantEvaluator::tryEvaluate(_functionCall);
-		solAssert(std::holds_alternative<rational>(typedRational.value));
-		auto rationalValue = std::get<rational>(typedRational.value);
-		solAssert(rationalValue.denominator() == 1);
-		bigint value = rationalValue.numerator();
-		solAssert(value <= std::numeric_limits<u256>::max());
-
-		define(_functionCall) << formatNumber(u256(value)) << "\n";
 		break;
 	}
 	default:

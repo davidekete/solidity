@@ -566,6 +566,12 @@ public:
 	/// @return the name of a function that checks if two external functions pointers are equal or not
 	std::string externalFunctionPointersEqualFunction();
 
+	/// Generates a function that calculates storage namespace base address using the ERC-7201 formula.
+	/// The function expects an address of a byte array stored in memory as its only argument.
+	/// The function uses scratch space.
+	/// @return The name of the function.
+	/// Signature: (namespaceID) -> slot
+	std::string erc7201();
 private:
 	/// @returns the name of a function that copies a struct from calldata or memory to storage
 	/// signature: (slot, value) ->
