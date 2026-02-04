@@ -6,6 +6,8 @@ Compiler Features:
 * Yul Optimizer: Remove redundant prerequisite steps from the default optimizer sequence.
 
 Bugfixes:
+* TypeChecker: Remove the wrong codegen assumption that a conversion between non-byte calldata arrays can never happen.
+* TypeChecker: Fix tuple components types comparison for non-trivial types. This bug led to unnecessary conversions between tuples of the same types.
 
 
 ### 0.8.33 (2025-12-18)
