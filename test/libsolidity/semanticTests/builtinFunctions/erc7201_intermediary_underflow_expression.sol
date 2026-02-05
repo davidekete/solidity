@@ -1,7 +1,6 @@
 contract C {
-    uint constant x = erc7201("main:example");
     function f() public pure returns (uint) {
-        return 2 * x - x;
+        return 1 - erc7201("main:example") + erc7201("main:example");
     }
 }
 // ----
