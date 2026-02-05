@@ -21,7 +21,7 @@
 #include <libyul/backends/evm/ssa/JunkAdmittingBlocksFinder.h>
 #include <libyul/backends/evm/ssa/LivenessAnalysis.h>
 #include <libyul/backends/evm/ssa/Stack.h>
-#include <libyul/backends/evm/SSACFGStackLayout.h>
+#include <libyul/backends/evm/ssa/StackLayout.h>
 
 #include <libsolutil/StringUtils.h>
 #include <libsolutil/Visitor.h>
@@ -152,13 +152,14 @@ private:
 			if (m_stackLayout)
 			{
 				auto const& blockLayout = (*m_stackLayout)[_id];
+				yulAssert(blockLayout);
 				m_result << fmt::format(
 					"StackIn: {}\\l\\\n",
-					stackToString(blockLayout.stackIn)
+					stackToString(blockLayout->stackIn)
 				);
 				m_result << fmt::format(
 					"StackOut: {}\\l\\n",
-					stackToString(blockLayout.stackOut)
+					stackToString(blockLayout->stackOut)
 				);
 			}
 
