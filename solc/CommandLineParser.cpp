@@ -164,24 +164,28 @@ void CommandLineParser::checkExperimental(std::vector<std::string> const& _optio
 	{
 		solThrow(
 			CommandLineValidationError,
-			"The following options are only available in experimental mode: " + joinOptionNames(_optionNames) + ". " +
-			"To enable experimental mode, use the --experimental flag."
+			fmt::format(
+				"The following options are only available in experimental mode: {}. "
+				"To enable experimental mode, use the --{} flag.",
+				joinOptionNames(_optionNames),
+				g_strExperimental
+			)
 		);
 	}
 
-	if (m_args.count(g_strEVMVersion))
-	{
-		std::optional<EVMVersion> versionOption = EVMVersion::fromString(m_args[g_strEVMVersion].as<std::string>());
-		if (versionOption && versionOption->isExperimental())
-			// TODO: Cover with test when the Amsterdam version is introduced
-			solThrow(
-				CommandLineValidationError,
-				fmt::format(
-					"EVM version '{}' is experimental and can only be selected in experimental mode."
-					"To enable experimental mode, use the --experimental flag", versionOption->name()
-				)
-			);
-	}
+	solAssert(m_args.contains(g_strEVMVersion));
+
+	if (m_options.output.evmVersion.isExperimental())
+		// TODO: Cover with test when the Amsterdam version is introduced
+		solThrow(
+			CommandLineValidationError,
+			fmt::format(
+				"EVM version '{}' is experimental and can only be selected in experimental mode. "
+				"To enable experimental mode, use the --{} flag",
+				m_options.output.evmVersion.name(),
+				g_strExperimental
+			)
+		);
 }
 
 std::ostream& operator<<(std::ostream& _out, CompilerOutputs const& _selection)
@@ -976,6 +980,15 @@ void CommandLineParser::processArgs()
 		g_strImportEvmAssemblerJson,
 	});
 
+	if (m_args.count(g_strEVMVersion))
+	{
+		std::string versionOptionStr = m_args[g_strEVMVersion].as<std::string>();
+		std::optional<langutil::EVMVersion> versionOption = langutil::EVMVersion::fromString(versionOptionStr);
+		if (!versionOption)
+			solThrow(CommandLineValidationError, "Invalid option for --" + g_strEVMVersion + ": " + versionOptionStr);
+		m_options.output.evmVersion = *versionOption;
+	}
+
 	checkExperimental({
 		g_strLSP,
 		g_strImportAst,
@@ -1244,15 +1257,6 @@ void CommandLineParser::processArgs()
 
 	if (m_options.input.mode == InputMode::Linker)
 		return;
-
-	if (m_args.count(g_strEVMVersion))
-	{
-		std::string versionOptionStr = m_args[g_strEVMVersion].as<std::string>();
-		std::optional<langutil::EVMVersion> versionOption = langutil::EVMVersion::fromString(versionOptionStr);
-		if (!versionOption)
-			solThrow(CommandLineValidationError, "Invalid option for --" + g_strEVMVersion + ": " + versionOptionStr);
-		m_options.output.evmVersion = *versionOption;
-	}
 
 	if (m_args.count(g_strEOFVersion))
 	{

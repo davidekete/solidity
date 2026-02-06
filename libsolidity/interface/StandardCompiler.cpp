@@ -1249,10 +1249,13 @@ std::variant<StandardCompiler::InputsAndSettings, Json> StandardCompiler::parseI
 			// TODO: Cover with test when the Amsterdam version is introduced
 			return formatFatalError(Error::Type::FatalError, fmt::format("EVM version {} is experimental, and can only be used by toggling the 'settings.experimental' option.", ret.evmVersion.name()));
 
-		if (isExperimentalArtifactRequested(ret.outputSelection))
-			return formatFatalError(Error::Type::FatalError, "'irAst', 'irOptimizedAst', 'yulCFGJson' and 'debugInfo.ethdebug' outputs are experimental, and can only be used by toggling the 'settings.experimental' option.");
+		if (ret.debugInfoSelection.has_value() && ret.debugInfoSelection->ethdebug)
+			return formatFatalError(Error::Type::FatalError, "'settings.debug.debugInfo.ethdebug' is experimental, and can only be used by toggling the 'settings.experimental' option.");
 
-		if (ret.eofVersion)
+		if (isExperimentalArtifactRequested(ret.outputSelection))
+			return formatFatalError(Error::Type::FatalError, "'irAst', 'irOptimizedAst', 'yulCFGJson' and 'ethdebug' outputs are experimental, and can only be used by toggling the 'settings.experimental' option.");
+
+		if (ret.eofVersion.has_value())
 			return formatFatalError(Error::Type::FatalError, "'eofVersion' is experimental, and can only be used by toggling the 'settings.experimental' option.");
 	}
 

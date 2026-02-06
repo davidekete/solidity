@@ -297,9 +297,9 @@ Json generateStandardJson(bool _viaIr, Json const& _debugInfoSelection, Json con
 	return result;
 }
 
-Json generateExperimentalStandardJson(bool _viaIr, Json const& _debugInfoSelection, Json const& _outputSelection, Code const& _code = SolidityCode(), bool _advancedOutputSelection = false)
+Json generateExperimentalStandardJson(bool _viaIR, Json const& _debugInfoSelection, Json const& _outputSelection, Code const& _code = SolidityCode(), bool _advancedOutputSelection = false)
 {
-	Json result = generateStandardJson(_viaIr, _debugInfoSelection, _outputSelection, _code, _advancedOutputSelection);
+	Json result = generateStandardJson(_viaIR, _debugInfoSelection, _outputSelection, _code, _advancedOutputSelection);
 	result["settings"]["experimental"] = true;
 	return result;
 }
