@@ -225,14 +225,14 @@ private:
 	/// @param _expressionObjectType The type of the object on which the member function is accessed.
 	/// @param _memberName The name of the member function being accessed.
 	/// @param _location The source location where the member function is accessed.
-	/// @param _hasEmptyArguments Indicates whether the member function is accessed without arguments.
+	/// @param _hasArguments Indicates whether the member function is accessed without arguments.
 	/// @param _isDefined Specifies if the member function is fully defined or abstract.
 	void validateAccessMemberFunctionType(
 		FunctionType const* _accessedMemberFunctionType,
 		Type const* _expressionObjectType,
 		ASTString const& _memberName,
 		langutil::SourceLocation const& _location,
-		bool _hasEmptyArguments,
+		bool _hasArguments,
 		bool _isDefined
 	) const;
 
