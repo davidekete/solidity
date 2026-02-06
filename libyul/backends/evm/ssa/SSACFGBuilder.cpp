@@ -112,7 +112,7 @@ SSACFG::ValueId SSACFGBuilder::tryRemoveTrivialPhi(SSACFG::ValueId _phi)
 
 	m_graph.block(phiInfo.block).phis.erase(_phi);
 
-	std::vector<SSACFG::ValueId> phiUsers = m_phiUsers[_phi] | ranges::view::remove(_phi) | ranges::to_vector;
+	std::vector<SSACFG::ValueId> phiUsers = m_phiUsers[_phi] | ranges::views::remove(_phi) | ranges::to_vector;
 	for (auto const& phiUser: phiUsers)
 	{
 		yulAssert(phiUser.hasValue());
@@ -130,6 +130,16 @@ SSACFG::ValueId SSACFGBuilder::tryRemoveTrivialPhi(SSACFG::ValueId _phi)
 	for (SSACFG::BlockId::ValueType blockIdValue = 0; blockIdValue < m_graph.numBlocks(); ++blockIdValue)
 	{
 		auto& block = m_graph.block(SSACFG::BlockId{blockIdValue});
+
+		for (auto blockPhi: block.phis)
+		{
+			yulAssert(blockPhi.hasValue());
+			yulAssert(blockPhi != _phi, "Phis should be defined in exactly one block, _phi was erased.");
+			auto& blockPhiInfo = m_graph.phiInfo(blockPhi);
+			for (auto& arg: blockPhiInfo.arguments)
+				yulAssert(arg != _phi);
+		}
+
 		for (auto& op: block.operations)
 			ranges::replace(op.inputs, _phi, same);
 		std::visit(util::GenericVisitor{
