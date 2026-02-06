@@ -3171,7 +3171,7 @@ void TypeChecker::validateAccessMemberFunctionType(
 	Type const* _expressionObjectType,
 	ASTString const& _memberName,
 	SourceLocation const& _location,
-	bool _emptyArguments,
+	bool _hasEmptyArguments,
 	bool _isDefined
 ) const
 {
@@ -3196,7 +3196,7 @@ void TypeChecker::validateAccessMemberFunctionType(
 
 	if (
 		_accessedMemberFunctionType->kind() == FunctionType::Kind::ArrayPush &&
-		!_emptyArguments &&
+		!_hasEmptyArguments &&
 		_expressionObjectType->containsNestedMapping()
 	)
 		m_errorReporter.typeError(
